@@ -1,0 +1,23 @@
+---
+import { getEntry } from 'astro:content';
+
+const entry = await getEntry('whitepaper', 'public-v1');
+if (!entry) throw new Error("Whitepaper entry not found.");
+
+const { Content } = await entry.render();
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{entry.data.title}</title>
+	</head>
+	<body class="bg-slate-950 text-slate-100 min-h-screen">
+		<main class="max-w-4xl mx-auto px-6 py-12 prose prose-invert prose-slate">
+			<Content />
+		</main>
+	</body>
+</html>
