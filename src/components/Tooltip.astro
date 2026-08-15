@@ -1,0 +1,109 @@
+---
+interface Props {
+  text: string;
+  position?: 'top' | 'bottom';
+  class?: string;
+}
+
+const { text, position = 'top', class: className = '' } = Astro.props;
+---
+
+<span
+  class:list={[
+    "tooltip-wrapper group relative inline-block cursor-pointer font-bold text-[#0969da] dark:text-[#58a6ff] hover:underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 focus-visible:rounded-xs select-none",
+    className
+  ]}
+  tabindex="0"
+  role="button"
+  aria-haspopup="dialog"
+  aria-expanded="false"
+  data-tooltip-trigger
+>
+  <slot />
+  
+  <span
+    role="tooltip"
+    class:list={[
+      "tooltip-bubble absolute left-1/2 -translate-x-1/2 z-50 whitespace-normal min-w-max max-w-xs rounded-lg px-3.5 py-2 text-xs font-normal shadow-2xl transition-all duration-150 ease-out",
+      "bg-[#1f242c] text-white border-2 border-slate-900 dark:bg-[#161b22] dark:text-white dark:border-white",
+      "opacity-0 scale-95 pointer-events-none invisible",
+      "group-[[data-open]]:opacity-100 group-[[data-open]]:scale-100 group-[[data-open]]:pointer-events-auto group-[[data-open]]:visible",
+      position === 'top' ? 'bottom-full mb-2.5' : 'top-full mt-2.5'
+    ]}
+  >
+    {text}
+    <span
+      class:list={[
+        "tooltip-arrow absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 bg-[#1f242c] dark:bg-[#161b22]",
+        position === 'top'
+          ? '-bottom-[6px] border-r-2 border-b-2 border-slate-900 dark:border-white'
+          : '-top-[6px] border-l-2 border-t-2 border-slate-900 dark:border-white'
+      ]}
+      aria-hidden="true"
+    />
+  </span>
+</span>
+
+<script>
+  function setupTooltips() {
+    const closeAll = (except?: HTMLElement | null) => {
+      document.querySelectorAll<HTMLElement>('[data-tooltip-trigger][data-open]').forEach((el) => {
+        if (el !== except) {
+          el.removeAttribute('data-open');
+          el.setAttribute('aria-expanded', 'false');
+        }
+      });
+    };
+
+    // Click / Tap to toggle
+    document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement | null;
+      const trigger = target?.closest<HTMLElement>('[data-tooltip-trigger]');
+
+      if (!trigger) {
+        closeAll();
+        return;
+      }
+
+      const isOpen = trigger.hasAttribute('data-open');
+      closeAll(trigger);
+
+      if (isOpen) {
+        trigger.removeAttribute('data-open');
+        trigger.setAttribute('aria-expanded', 'false');
+      } else {
+        trigger.setAttribute('data-open', '');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    // Keyboard support (Enter / Space to toggle, Escape to close)
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeAll();
+        return;
+      }
+
+      if (event.key === 'Enter' || event.key === ' ') {
+        const active = document.activeElement as HTMLElement | null;
+        if (active?.hasAttribute('data-tooltip-trigger')) {
+          event.preventDefault();
+          const isOpen = active.hasAttribute('data-open');
+          closeAll(active);
+
+          if (isOpen) {
+            active.removeAttribute('data-open');
+            active.setAttribute('aria-expanded', 'false');
+          } else {
+            active.setAttribute('data-open', '');
+            active.setAttribute('aria-expanded', 'true');
+          }
+        }
+      }
+    });
+  }
+
+  // Initialize on page load and view transitions
+  setupTooltips();
+  document.addEventListener('astro:page-load', setupTooltips);
+</script>

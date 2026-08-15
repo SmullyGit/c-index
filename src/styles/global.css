@@ -1,1 +1,201 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-size: 18px;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: #1f2328;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  html.dark body {
+    background-color: #0d1117;
+    color: #e6edf3;
+  }
+}
+
+/* Base Prose & Light Mode */
+.prose {
+  color: #1f2328;
+}
+
+.prose strong {
+  color: #1f2328;
+  font-weight: 600;
+}
+
+.prose h1,
+.prose h2 {
+  border-bottom: 1px solid #d0d7de;
+  padding-bottom: 0.3em;
+  font-weight: 600;
+  color: #1f2328;
+}
+
+.prose h1 {
+  font-size: 2em;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose h2 {
+  font-size: 1.5em;
+  margin-top: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.prose h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #1f2328;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  color: #1f2328;
+  line-height: 1.7;
+}
+
+.prose a {
+  color: #0969da;
+  text-decoration: none;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+.prose blockquote {
+  border-left: 0.25em solid #d0d7de;
+  color: #59636e;
+  padding-left: 1em;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: normal;
+}
+
+.prose hr {
+  border-color: #d0d7de;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Remove default Tailwind typography backticks on code */
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+  content: none;
+}
+
+.prose :where(code):not(:where(pre code, [class~="not-prose"], [class~="not-prose"] *)) {
+  background-color: rgba(175, 184, 193, 0.2);
+  color: #1f2328;
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  font-size: 85%;
+  font-weight: 400;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.prose pre {
+  background-color: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 16px;
+  color: #1f2328;
+}
+
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #d0d7de;
+  padding: 6px 13px;
+}
+
+.prose th {
+  background-color: #f6f8fa;
+  font-weight: 600;
+  color: #1f2328;
+}
+
+.prose tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/* Dark Mode Prose Overrides */
+html.dark .prose {
+  color: #e6edf3;
+}
+
+html.dark .prose strong {
+  color: #e6edf3;
+}
+
+html.dark .prose h1,
+html.dark .prose h2 {
+  border-bottom-color: #30363d;
+  color: #f0f6fc;
+}
+
+html.dark .prose h3 {
+  color: #f0f6fc;
+}
+
+html.dark .prose p,
+html.dark .prose ul,
+html.dark .prose ol {
+  color: #e6edf3;
+}
+
+html.dark .prose a {
+  color: #58a6ff;
+}
+
+html.dark .prose blockquote {
+  border-left-color: #30363d;
+  color: #8b949e;
+}
+
+html.dark .prose hr {
+  border-color: #30363d;
+}
+
+html.dark .prose :where(code):not(:where(pre code, [class~="not-prose"], [class~="not-prose"] *)) {
+  background-color: rgba(110, 118, 129, 0.2);
+  color: #e6edf3;
+}
+
+html.dark .prose pre {
+  background-color: #161b22;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+html.dark .prose th,
+html.dark .prose td {
+  border-color: #30363d;
+}
+
+html.dark .prose th {
+  background-color: #161b22;
+  color: #f0f6fc;
+}
+
+html.dark .prose tr:nth-child(2n) {
+  background-color: #161b22;
+}
