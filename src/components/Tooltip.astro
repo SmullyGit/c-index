@@ -10,7 +10,7 @@ const { text, position = 'top', class: className = '' } = Astro.props;
 
 <span
   class:list={[
-    "tooltip-wrapper group relative inline-block cursor-pointer font-bold text-[#0969da] dark:text-[#58a6ff] hover:underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 focus-visible:rounded-xs select-none",
+    "tooltip-wrapper group relative inline-block cursor-pointer font-bold text-link hover:underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 focus-visible:rounded-xs select-none",
     className
   ]}
   tabindex="0"
@@ -70,8 +70,8 @@ const { text, position = 'top', class: className = '' } = Astro.props;
       bubble.style.width = `${maxBubbleWidth}px`;
 
       // On mobile (< 640px), center of the screen; on desktop, center of the trigger word
-      const desiredCenterX = viewportWidth < 640
-        ? viewportWidth / 2
+      const desiredCenterX = viewportWidth < 640 
+        ? viewportWidth / 2 
         : triggerRect.left + triggerRect.width / 2;
 
       // Clamp bubble center within viewport boundaries

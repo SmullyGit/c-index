@@ -7,14 +7,14 @@ interface Props extends HTMLAttributes<'a'> {
 
 const { href, class: className = '', ...props } = Astro.props;
 
-// Check if link starts with external protocols
-const isExternal = typeof href === 'string' && /^(https?:)?\/\//i.test(href);
+// Check if link starts with external protocols and is not on the internal domain
+const isExternal = typeof href === 'string' && /^(https?:)?\/\//i.test(href) && !href.includes('thecindex.org');
 ---
 
 <a
   href={href}
   class:list={[
-    "inline-inline items-baseline text-[#58a6ff] hover:underline underline-offset-2 transition-colors",
+    "inline items-baseline text-link hover:underline underline-offset-2 transition-colors",
     isExternal ? "external-link group/link" : "internal-link",
     className
   ]}
@@ -22,7 +22,7 @@ const isExternal = typeof href === 'string' && /^(https?:)?\/\//i.test(href);
   rel={isExternal ? "noopener noreferrer" : undefined}
   {...props}
 ><slot />{isExternal && (
-    <span class="inline-flex items-center ml-1 text-slate-400 group-hover/link:text-[#58a6ff] transition-colors" aria-hidden="true">
+    <span class="inline-flex items-center ml-1 text-link opacity-80 group-hover/link:opacity-100 transition-opacity" aria-hidden="true">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

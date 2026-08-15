@@ -1,9 +1,9 @@
 ---
-import '../styles/global.css';
 import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
 import Tooltip from '../components/Tooltip.astro';
 import Link from '../components/Link.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
 
 const entry = await getEntry('whitepaper', 'public-v1');
 if (!entry) throw new Error("Whitepaper entry not found.");
@@ -11,32 +11,13 @@ if (!entry) throw new Error("Whitepaper entry not found.");
 const { Content } = await render(entry);
 ---
 
-<html lang="en" class="dark">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{entry.data.title}</title>
-		<script is:inline>
-			const theme = (() => {
-				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-					return localStorage.getItem('theme');
-				}
-				return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-			})();
-
-			if (theme === 'dark') {
-				document.documentElement.classList.add('dark');
-			} else {
-				document.documentElement.classList.remove('dark');
-			}
-		</script>
-	</head>
-	<body class="min-h-screen antialiased">
-		<ThemeToggle />
-		<main class="max-w-4xl mx-auto px-6 py-12 prose">
-			<Content components={{ Tooltip, a: Link }} />
-		</main>
-	</body>
-</html>
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  type="article"
+>
+  <main class="max-w-4xl mx-auto px-6 py-12 prose">
+    <Header />
+    <Content components={{ Tooltip, a: Link }} />
+  </main>
+</BaseLayout>

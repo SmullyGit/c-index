@@ -1,0 +1,93 @@
+---
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const {
+  title = "The C-Index: Securing the Digital Common",
+  description = "The Citizen Index (C-Index) is a mathematical economic mechanism for securing the digital commons and redistributing corporate equity yield.",
+  image = "/c-index-logo-crimson.png",
+  type = "article"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://thecindex.org");
+const imageURL = new URL(image, Astro.site ?? "https://thecindex.org");
+const siteTitle = "The Citizen Index";
+const pageTitle = title.includes("C-Index") || title.includes("Citizen Index") ? title : `${title} | ${siteTitle}`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": type === 'article' ? "TechArticle" : "WebSite",
+  "name": pageTitle,
+  "headline": title,
+  "description": description,
+  "url": canonicalURL.toString(),
+  "publisher": {
+    "@type": "Organization",
+    "name": "The Citizen Index",
+    "url": "https://thecindex.org"
+  }
+};
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/c-index-logo-crimson.png" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="theme-color" content="#0d1117" />
+
+    <!-- Open Graph / Facebook / LinkedIn / Discord -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:site_name" content="The Citizen Index" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={pageTitle} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={imageURL} />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Theme Initialization Script (Prevents FOUC) -->
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      })();
+
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+  </head>
+  <body class="min-h-screen antialiased">
+    <ThemeToggle />
+    <slot />
+  </body>
+</html>
