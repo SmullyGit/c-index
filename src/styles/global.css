@@ -7,12 +7,14 @@
   html {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     font-size: 18px;
+    overflow-x: hidden;
   }
 
   body {
     background-color: #ffffff;
     color: #1f2328;
     transition: background-color 0.2s ease, color 0.2s ease;
+    overflow-x: hidden;
   }
 
   html.dark body {
@@ -24,6 +26,15 @@
 /* Base Prose & Light Mode */
 .prose {
   color: #1f2328;
+}
+
+.prose .tooltip-arrow {
+    bottom: calc(6px * -1.2);
+}
+
+.prose .tooltip-bubble {
+  padding: 16px 20px;
+  font-size: 1.05em;
 }
 
 .prose strong {

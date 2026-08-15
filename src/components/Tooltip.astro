@@ -20,21 +20,22 @@ const { text, position = 'top', class: className = '' } = Astro.props;
   data-tooltip-trigger
 >
   <slot />
-  
+
   <span
     role="tooltip"
     class:list={[
-      "tooltip-bubble absolute left-1/2 -translate-x-1/2 z-50 whitespace-normal min-w-max max-w-xs rounded-lg px-3.5 py-2 text-xs font-normal shadow-2xl transition-all duration-150 ease-out",
+      "tooltip-bubble absolute z-50 rounded-lg px-4 py-3 text-xs sm:text-xs font-normal shadow-2xl transition-opacity duration-150 ease-out",
+      "w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] sm:w-max sm:max-w-sm whitespace-normal break-words leading-relaxed text-left",
       "bg-[#1f242c] text-white border-2 border-slate-900 dark:bg-[#161b22] dark:text-white dark:border-white",
-      "opacity-0 scale-95 pointer-events-none invisible",
-      "group-[[data-open]]:opacity-100 group-[[data-open]]:scale-100 group-[[data-open]]:pointer-events-auto group-[[data-open]]:visible",
-      position === 'top' ? 'bottom-full mb-2.5' : 'top-full mt-2.5'
+      "opacity-0 pointer-events-none invisible",
+      "group-[[data-open]]:opacity-100 group-[[data-open]]:pointer-events-auto group-[[data-open]]:visible",
+      position === 'top' ? 'bottom-full mb-3' : 'top-full mt-3'
     ]}
   >
     {text}
     <span
       class:list={[
-        "tooltip-arrow absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 bg-[#1f242c] dark:bg-[#161b22]",
+        "tooltip-arrow absolute w-2.5 h-2.5 -ml-[5px] rotate-45 bg-[#1f242c] dark:bg-[#161b22]",
         position === 'top'
           ? '-bottom-[6px] border-r-2 border-b-2 border-slate-900 dark:border-white'
           : '-top-[6px] border-l-2 border-t-2 border-slate-900 dark:border-white'
@@ -53,6 +54,42 @@ const { text, position = 'top', class: className = '' } = Astro.props;
           el.setAttribute('aria-expanded', 'false');
         }
       });
+    };
+
+    const positionBubble = (trigger: HTMLElement) => {
+      const bubble = trigger.querySelector<HTMLElement>('.tooltip-bubble');
+      const arrow = trigger.querySelector<HTMLElement>('.tooltip-arrow');
+      if (!bubble) return;
+
+      const triggerRect = trigger.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const padding = 16;
+
+      // Available width for the bubble
+      const maxBubbleWidth = Math.min(viewportWidth - padding * 2, 400);
+      bubble.style.width = `${maxBubbleWidth}px`;
+
+      // On mobile (< 640px), center of the screen; on desktop, center of the trigger word
+      const desiredCenterX = viewportWidth < 640
+        ? viewportWidth / 2
+        : triggerRect.left + triggerRect.width / 2;
+
+      // Clamp bubble center within viewport boundaries
+      const halfWidth = maxBubbleWidth / 2;
+      const clampedCenterX = Math.max(padding + halfWidth, Math.min(viewportWidth - padding - halfWidth, desiredCenterX));
+
+      // Calculate bubble left coordinate relative to the trigger span
+      const bubbleLeftInViewport = clampedCenterX - halfWidth;
+      const relativeLeft = bubbleLeftInViewport - triggerRect.left;
+      bubble.style.left = `${relativeLeft}px`;
+
+      // Position the arrow directly above the trigger's center using left offset
+      if (arrow) {
+        const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+        const arrowXInBubble = triggerCenterX - bubbleLeftInViewport;
+        const clampedArrowX = Math.max(16, Math.min(maxBubbleWidth - 16, arrowXInBubble));
+        arrow.style.left = `${clampedArrowX}px`;
+      }
     };
 
     // Click / Tap to toggle
@@ -74,6 +111,7 @@ const { text, position = 'top', class: className = '' } = Astro.props;
       } else {
         trigger.setAttribute('data-open', '');
         trigger.setAttribute('aria-expanded', 'true');
+        positionBubble(trigger);
       }
     });
 
@@ -97,9 +135,16 @@ const { text, position = 'top', class: className = '' } = Astro.props;
           } else {
             active.setAttribute('data-open', '');
             active.setAttribute('aria-expanded', 'true');
+            positionBubble(active);
           }
         }
       }
+    });
+
+    // Recalculate on window resize or orientation change
+    window.addEventListener('resize', () => {
+      const openTrigger = document.querySelector<HTMLElement>('[data-tooltip-trigger][data-open]');
+      if (openTrigger) positionBubble(openTrigger);
     });
   }
 
